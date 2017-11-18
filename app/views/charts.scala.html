@@ -1,0 +1,124 @@
+@()
+
+@main("Welcome to Home Integrator") {
+    <div id="content">
+        <script type="text/javascript" charset="utf-8">
+                var myChart;
+                $(function () {
+                    var options = {
+                        title: {
+                            text: 'Power'
+                        },
+                        chart: {
+                            type: 'areaspline',
+                            zoomType: 'x'
+                        },
+                        xAxis: {
+                            type: 'datetime',
+                        },
+                        yAxis: {
+                            plotLines: [{
+                                color: 'red', // Color value
+//                                dashStyle: 'longdashdot', // Style of the plot line. Default to solid
+                                value: 0, // Value of where the line will appear
+                                width: 2 // Width of the line
+                            }],
+                            title: {
+                                text: 'Watt'
+                            }
+                        },
+                        rangeSelector: {
+                            selected: 1
+                        },
+                        plotOptions: {
+                            series: {
+                                fillOpacity: 0.1,
+                                dataLabels: {
+                                    enabled: true
+                                }
+                            }
+                        },
+                        series: [{
+                            name: 'Heatpump Power Consumption',
+                            color: '#ff0000',
+                            data: []
+                        }, {
+                            name: 'House Energy Consumption',
+                            color: '#0099ff',
+                            data: []
+                        }, {
+                            name: 'Energy Production',
+                            color: '#66ff33',
+                            data: []
+                        }, {
+                            name: 'Power Grid',
+                            color: '#000000',
+                            data: []
+                        }]
+                    };
+
+                    myChart = Highcharts.chart('chart', options);
+
+                    if (!!window.EventSource) {
+                        var consumptionSource = new EventSource("@routes.HomeController.streamMyHomeControlRealtimeData()");
+                        consumptionSource.addEventListener('message', function (event) {
+                            var data = JSON.parse(event.data);
+                            var date = data.timestamp * 1000;
+                            myChart.series[0].addPoint([date, data.heatpumpPowerConsumption * 1000]);
+                            $('#heatpumpPowerConsumption').html(data.heatpumpPowerConsumption)
+                            $('#livingRoomTemp').html(data.livingRoomTemp.toFixed(2))
+                            $('#sleepingRoomCo2').html(data.sleepingRoomCo2.toFixed(2))
+                        });
+
+                        var powerFlowSource = new EventSource("@routes.HomeController.streamPowerFlowRealtimeData()");
+                        powerFlowSource.addEventListener('message', function (event) {
+                            var data = JSON.parse(event.data);
+                            var date = data.timestamp * 1000;
+                            var powerPv = data.powerPv == null ? 0 : data.powerPv;
+                            var selfConsumption = data.selfConsumption == null ? 0 : data.selfConsumption;
+                            var autonomy = data.autonomy == null ? 0 : data.autonomy;
+                            var powerGrid = data.powerGrid == null ? 0 : data.powerGrid;
+                            var powerLoad = data.powerLoad == null ? 0 : data.powerLoad;
+                            powerGrid = powerGrid.toFixed(2)
+                            powerLoad = powerLoad.toFixed(2)
+                            console.log(powerLoad + " grid: " + powerGrid)
+                            myChart.series[1].addPoint([date, Math.abs(powerLoad)]);
+                            myChart.series[2].addPoint([date, powerPv]);
+                            myChart.series[3].addPoint([date, powerGrid]);
+                            console.log(`${date} ${powerLoad} ${powerGrid}`)
+                            $('#powerGrid').html(powerGrid)
+                            $('#powerLoad').html(powerLoad)
+                            $('#powerPv').html(powerPv)
+                            $('#selfConsumption').html(selfConsumption)
+                            $('#autonomy').html(autonomy)
+                        });
+                    } else {
+                        $("#powerConsumption").html("Sorry. This browser doesn't seem to support Server sent event. Check <a href='http://html5test.com/compare/feature/communication-eventSource.html'>html5test</a> for browser compatibility.");
+                    }
+                });
+        </script>
+        <h1>Home Integrator Realtime Data</h1>
+        <div id="chart" style="width: 100%;
+            height: 700px;"></div>
+
+        Power Consumption: <span id="powerConsumption"></span> W<br/>
+        Power Consumption P1: <span id="powerConsumptionP1"></span> W<br/>
+        Power Consumption P2: <span id="powerConsumptionP2"></span> W<br/>
+        Power Consumption P3: <span id="powerConsumptionP3"></span> W<br/>
+        <br/>
+
+        Power Grid: <span id="powerGrid"></span> W<br/>
+        Power Load: <span id="powerLoad"></span> W<br/>
+        Power PV: <span id="powerPv"></span> W<br/>
+        Self Consumption: <span id="selfConsumption"></span>
+        <br/>
+        Autonomy: <span id="autonomy"></span>
+        <br/>
+        <br/>
+
+        Consumption HeatPump: <span id="heatpumpPowerConsumption"></span> kW<br/>
+        Temp Living Room: <span id="livingRoomTemp"></span> C<br/>
+        Co2 Sleeping Room: <span id="sleepingRoomCo2"></span> ppm<br/>
+    </div>
+
+}
