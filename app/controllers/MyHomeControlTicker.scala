@@ -5,7 +5,7 @@ package controllers
   */
 
 import akka.stream.scaladsl.Source
-import services.{MyHomeControlCollector, MyHomeControlData}
+import interfaces.{MyHomeControlCollector, MyHomeControlData}
 import spray.json._
 
 import scala.concurrent.duration._

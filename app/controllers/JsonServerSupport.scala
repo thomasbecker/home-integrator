@@ -1,7 +1,7 @@
 package controllers
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import services._
+import interfaces._
 import spray.json.DefaultJsonProtocol
 
 /**

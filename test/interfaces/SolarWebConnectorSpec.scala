@@ -1,4 +1,4 @@
-package services
+package interfaces
 
 import org.specs2.mutable.Specification
 import play.api.Logger

@@ -4,7 +4,7 @@ package controllers
   * Created by Thomas Becker (thomas.becker00@gmail.com) on 16.11.17.
   */
 import akka.stream.scaladsl.Source
-import services.SolarWebConnector
+import interfaces.SolarWebConnector
 import spray.json._
 
 import scala.concurrent.duration._
