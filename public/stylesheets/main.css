@@ -1,0 +1,9 @@
+div#rawValues{
+    height:500px;width:300px;
+    background:yellow;
+    float:right;
+}
+
+div#barchart{
+    float:left;
+}

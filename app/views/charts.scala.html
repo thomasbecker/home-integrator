@@ -5,7 +5,9 @@
         <script type="text/javascript" charset="utf-8">
                 var myChart;
                 $(function () {
-                    var options = {
+                    var heatpumpConsumption = 0;
+
+                    var areaChartOptions = {
                         title: {
                             text: 'Power'
                         },
@@ -47,7 +49,7 @@
                             color: '#0099ff',
                             data: []
                         }, {
-                            name: 'Energy Production',
+                            name: 'PV Production',
                             color: '#66ff33',
                             data: []
                         }, {
@@ -57,15 +59,48 @@
                         }]
                     };
 
-                    myChart = Highcharts.chart('chart', options);
+                    myChart = Highcharts.chart('chart', areaChartOptions);
+
+                    let categories = ['Power Grid', 'House Consumption', 'Heatpump Consumption', 'PV Production'];
+                    currentBarChart = Highcharts.chart('barchart', {
+                        chart: {
+                            type: 'bar'
+                        },
+                        title: {
+                            text: 'Current Consumption/Yield'
+                        },
+                        xAxis: {
+                            categories: categories,
+                            reversed: false,
+                            labels: {
+                                step: 1
+                            }
+                        },
+                        tooltip: {
+                            valueSuffix: 'W'
+                        },
+                        plotOptions: {
+                            series: {
+                                stacking: 'normal'
+                            }
+                        },
+                        credits: {
+                            enabled: false
+                        },
+                        series: [{
+                            name: "Consumption / Yield",
+                            data: [{y: -500, color: '#000000'}, {y: -500, color: '#0099ff'}, {y: -500, color: '#ff0000'}, {y: -500, color: '#66ff33'}]
+                        }],
+                    });
 
                     if (!!window.EventSource) {
                         var consumptionSource = new EventSource("@routes.HomeController.streamMyHomeControlRealtimeData()");
                         consumptionSource.addEventListener('message', function (event) {
                             var data = JSON.parse(event.data);
                             var date = data.timestamp * 1000;
-                            myChart.series[0].addPoint([date, data.heatpumpPowerConsumption * 1000]);
-                            $('#heatpumpPowerConsumption').html(data.heatpumpPowerConsumption)
+                            heatpumpConsumption = data.heatpumpPowerConsumption * 1000;
+                            myChart.series[0].addPoint([date, heatpumpConsumption]);
+                            $('#heatpumpPowerConsumption').html(heatpumpConsumption)
                             $('#livingRoomTemp').html(data.livingRoomTemp.toFixed(2))
                             $('#sleepingRoomCo2').html(data.sleepingRoomCo2.toFixed(2))
                         });
@@ -79,12 +114,14 @@
                             var autonomy = data.autonomy == null ? 0 : data.autonomy;
                             var powerGrid = data.powerGrid == null ? 0 : data.powerGrid;
                             var powerLoad = data.powerLoad == null ? 0 : data.powerLoad;
-                            powerGrid = powerGrid.toFixed(2)
-                            powerLoad = powerLoad.toFixed(2)
-                            console.log(powerLoad + " grid: " + powerGrid)
-                            myChart.series[1].addPoint([date, Math.abs(powerLoad)]);
+//                            powerGrid = powerGrid.toFixed(2)
+                            powerLoad = powerLoad.toFixed(2);
+                            console.log(powerLoad + " grid: " + powerGrid);
+                            myChart.series[1].addPoint([date, powerLoad]);
                             myChart.series[2].addPoint([date, powerPv]);
                             myChart.series[3].addPoint([date, powerGrid]);
+
+                            currentBarChart.series[0].setData([powerLoad, powerGrid, heatpumpConsumption, powerPv])
                             console.log(`${date} ${powerLoad} ${powerGrid}`)
                             $('#powerGrid').html(powerGrid)
                             $('#powerLoad').html(powerLoad)
@@ -100,25 +137,23 @@
         <h1>Home Integrator Realtime Data</h1>
         <div id="chart" style="width: 100%;
             height: 700px;"></div>
+        <div id="barchart" style="width: 600px;
+            height: 400px;"></div>
 
-        Power Consumption: <span id="powerConsumption"></span> W<br/>
-        Power Consumption P1: <span id="powerConsumptionP1"></span> W<br/>
-        Power Consumption P2: <span id="powerConsumptionP2"></span> W<br/>
-        Power Consumption P3: <span id="powerConsumptionP3"></span> W<br/>
-        <br/>
+        <div id="rawValues">
+            Power Grid: <span id="powerGrid"></span> W<br/>
+            Power Load: <span id="powerLoad"></span> W<br/>
+            Power PV: <span id="powerPv"></span> W<br/>
+            Self Consumption: <span id="selfConsumption"></span>
+            <br/>
+            Autonomy: <span id="autonomy"></span>
+            <br/>
+            <br/>
 
-        Power Grid: <span id="powerGrid"></span> W<br/>
-        Power Load: <span id="powerLoad"></span> W<br/>
-        Power PV: <span id="powerPv"></span> W<br/>
-        Self Consumption: <span id="selfConsumption"></span>
-        <br/>
-        Autonomy: <span id="autonomy"></span>
-        <br/>
-        <br/>
-
-        Consumption HeatPump: <span id="heatpumpPowerConsumption"></span> kW<br/>
-        Temp Living Room: <span id="livingRoomTemp"></span> C<br/>
-        Co2 Sleeping Room: <span id="sleepingRoomCo2"></span> ppm<br/>
+            Consumption HeatPump: <span id="heatpumpPowerConsumption"></span> kW<br/>
+            Temp Living Room: <span id="livingRoomTemp"></span> C<br/>
+            Co2 Sleeping Room: <span id="sleepingRoomCo2"></span> ppm<br/>
+        </div>
     </div>
 
 }
