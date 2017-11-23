@@ -13,12 +13,12 @@ trait SolarTicker extends JsonServerSupport {
   val solarWebConnector = new SolarWebConnector
 
   def meterRealTimeSource: Source[String, _] = {
-    val tickSource = Source.tick(0 millis, 5 seconds, "TICK")
+    val tickSource = Source.tick(0 millis, 30 seconds, "TICK")
     tickSource.map((tick) => solarWebConnector.getMeterRealtimeData().toJson.toString)
   }
 
   def powerFlowRealtimeSource: Source[String, _] = {
-    val tickSource = Source.tick(0 millis, 5 seconds, "powerFlowTick")
+    val tickSource = Source.tick(0 millis, 30 seconds, "powerFlowTick")
     tickSource.map((tick) => solarWebConnector.getPowerFlowRealtimeData().toJson.toString)
   }
 }

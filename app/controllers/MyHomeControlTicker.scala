@@ -14,7 +14,7 @@ trait MyHomeControlTicker extends JsonServerSupport {
   implicit val someFormat = jsonFormat4(MyHomeControlData)
   val myHomeControlCollector = new MyHomeControlCollector
   def myHomeControlRealtimeData: Source[String, _] = {
-    val tickSource = Source.tick(0 millis, 5 seconds, "TICK")
+    val tickSource = Source.tick(0 millis, 30 seconds, "TICK")
     tickSource.map((tick) => {
       val myHomeControlData = myHomeControlCollector.collectMyHomeControlData()
       myHomeControlData.toJson.toString

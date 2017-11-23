@@ -115,13 +115,13 @@
                             var powerGrid = data.powerGrid == null ? 0 : data.powerGrid;
                             var powerLoad = data.powerLoad == null ? 0 : data.powerLoad;
 //                            powerGrid = powerGrid.toFixed(2)
-                            powerLoad = powerLoad.toFixed(2);
+                            powerLoad = Math.abs(powerLoad.toFixed(2));
                             console.log(powerLoad + " grid: " + powerGrid);
                             myChart.series[1].addPoint([date, powerLoad]);
                             myChart.series[2].addPoint([date, powerPv]);
                             myChart.series[3].addPoint([date, powerGrid]);
 
-                            currentBarChart.series[0].setData([powerLoad, powerGrid, heatpumpConsumption, powerPv])
+                            currentBarChart.series[0].setData([powerGrid, powerLoad, heatpumpConsumption, powerPv])
                             console.log(`${date} ${powerLoad} ${powerGrid}`)
                             $('#powerGrid').html(powerGrid)
                             $('#powerLoad').html(powerLoad)
