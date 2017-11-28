@@ -9,6 +9,7 @@ GET     /charts                              controllers.HomeController.charts()
 GET     /streamRealtimeData                  controllers.HomeController.streamRealtimeData()
 GET     /streamPowerFlowRealtimeData         controllers.HomeController.streamPowerFlowRealtimeData()
 GET     /myHomeControlRealtimeData           controllers.HomeController.streamMyHomeControlRealtimeData()
+GET     /homeData                            controllers.HomeController.streamHomeData()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

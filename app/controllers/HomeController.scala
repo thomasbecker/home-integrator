@@ -12,7 +12,7 @@ import play.api.mvc._
   * application's home page.
   */
 @Singleton
-class HomeController @Inject()(cc: ControllerComponents) extends AbstractController(cc) with SolarTicker with MyHomeControlTicker{
+class HomeController @Inject()(cc: ControllerComponents) extends AbstractController(cc) with SolarTicker with MyHomeControlTicker with HomeDataTicker {
 
   def index() = Action { implicit request: Request[AnyContent] =>
     Ok(views.html.index())
@@ -32,5 +32,9 @@ class HomeController @Inject()(cc: ControllerComponents) extends AbstractControl
 
   def streamMyHomeControlRealtimeData() = Action {
     Ok.chunked(myHomeControlRealtimeData via EventSource.flow).as(ContentTypes.EVENT_STREAM)
+  }
+
+  def streamHomeData() = Action {
+    Ok.chunked(homeDataSource via EventSource.flow).as(ContentTypes.EVENT_STREAM)
   }
 }
