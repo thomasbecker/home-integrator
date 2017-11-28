@@ -11,5 +11,5 @@ trait JsonServerSupport extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val meterDataFormat = jsonFormat5(MeterData)
   implicit val myHomeControlDataFormat = jsonFormat4(MyHomeControlData)
   implicit val powerFlowSiteFormat = jsonFormat6(PowerFlowSite)
-  implicit val homeData = jsonFormat2(HomeData)
+  implicit val homeData = jsonFormat3(HomeData)
 }
