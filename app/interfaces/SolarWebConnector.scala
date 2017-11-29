@@ -51,7 +51,7 @@ class SolarWebConnector extends JsonSupport {
     val inverterRealtimeUrlPath = s"""/solar_api/v1/GetInverterRealtimeData.cgi?scope=System"""
     val flowGet: Future[InverterResponse] = sendRequest[InverterResponse](inverterRealtimeUrlPath)
     val start = System.currentTimeMillis()
-    val result = Await.result(flowGet, 5 seconds)
+    val result = Await.result(flowGet, 30 seconds)
     val end = System.currentTimeMillis()
     println(s"Result in ${end - start} millis: $result")
     result.body.data
@@ -61,7 +61,7 @@ class SolarWebConnector extends JsonSupport {
     val meterRealtimeUrlPath = s"""/solar_api/v1/GetMeterRealtimeData.cgi?scope=Device&deviceid=0"""
     val flowGet: Future[MeterResponse] = sendRequest[MeterResponse](meterRealtimeUrlPath)
     val start = System.currentTimeMillis()
-    val result = Await.result(flowGet, 5 seconds)
+    val result = Await.result(flowGet, 30 seconds)
     val end = System.currentTimeMillis()
     println(s"Result in ${end - start} millis: $result")
     result.body.data
@@ -71,7 +71,7 @@ class SolarWebConnector extends JsonSupport {
     val meterRealtimeUrlPath = s"""/solar_api/v1/GetPowerFlowRealtimeData.fcgi"""
     val flowGet: Future[PowerFlowResponse] = sendRequest[PowerFlowResponse](meterRealtimeUrlPath)
     val start = System.currentTimeMillis()
-    val result = Await.result(flowGet, 5 seconds)
+    val result = Await.result(flowGet, 30 seconds)
     val end = System.currentTimeMillis()
     println(s"Result in ${end - start} millis: $result")
     val site = result.body.data.site
