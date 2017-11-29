@@ -3,7 +3,8 @@ package controllers
 /**
   * Created by Thomas Becker (thomas.becker00@gmail.com) on 16.11.17.
   */
-import akka.stream.scaladsl.Source
+
+import akka.stream.scaladsl.{RestartSource, Source}
 import interfaces.HomeCollector
 import spray.json._
 
@@ -13,7 +14,13 @@ trait HomeDataTicker extends JsonServerSupport {
   val homeCollector = new HomeCollector
 
   def homeDataSource: Source[String, _] = {
-    val tickSource = Source.tick(0 millis, 10 seconds, "TICK")
-    tickSource.map((tick) => homeCollector.collectData.toJson.toString)
+    val tickSource = RestartSource.withBackoff(
+      minBackoff = 3.seconds,
+      maxBackoff = 30.seconds,
+      randomFactor = 0.2 // adds 20% "noise" to vary the intervals slightly
+    ) { () =>
+      Source.tick(0 millis, 20 seconds, "TICK").map((tick) => homeCollector.collectData.toJson.toString)
+    }
+    tickSource
   }
 }
