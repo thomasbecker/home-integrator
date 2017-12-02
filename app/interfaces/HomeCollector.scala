@@ -2,8 +2,8 @@ package interfaces
 
 import java.time.Instant
 
+import de.softwareschmied.myhomecontrolinterface.{MyHomeControlCollector, MyHomeControlData}
 import de.softwareschmied.solarwebinterface.{PowerFlowSite, SolarWebConnector}
-;
 
 /**
  * Created by Thomas Becker (thomas.becker00@gmail.com) on 28.11.17.

@@ -1,6 +1,8 @@
 package controllers
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import de.softwareschmied.myhomecontrolinterface.MyHomeControlData
+import de.softwareschmied.solarwebinterface.{MeterData, PowerFlowSite}
 import interfaces._
 import spray.json.DefaultJsonProtocol
 
