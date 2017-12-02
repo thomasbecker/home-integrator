@@ -1,6 +1,8 @@
 package interfaces
 
 import java.time.Instant
+
+import de.softwareschmied.solarwebinterface.{PowerFlowSite, SolarWebConnector}
 ;
 
 /**

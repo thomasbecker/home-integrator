@@ -11,13 +11,12 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.12.4"
 
+libraryDependencies += "de.softwareschmied" %% "solarweb-interface" % "0.0.1-SNAPSHOT"
+
 libraryDependencies += guice
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
 libraryDependencies += specs2 % Test
 libraryDependencies += "de.softwareschmied" % "myHomeControl-client" % "1.0-SNAPSHOT"
-libraryDependencies += "io.github.openfeign" % "feign-okhttp" % "9.3.1"
-libraryDependencies += "io.github.openfeign" % "feign-slf4j" % "9.3.1"
-libraryDependencies += "io.github.openfeign" % "feign-gson" % "9.3.1"
 libraryDependencies += "com.google.code.gson" % "gson" % "2.8.2"
 
 val akkaHttpVersion = "10.0.4"
